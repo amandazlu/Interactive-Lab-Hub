@@ -161,6 +161,8 @@ In an earlier version of this class students experimented with foundational comp
 #### MediaPipe
 [Video](https://drive.google.com/file/d/183Ai6g_7RC0FEAljpmUj8FI_ZzhLRPVS/view?usp=sharing)
 
+### Moondream
+
 #### Teachable Machines
 
 <img width="1156" height="889" alt="Screenshot 2025-10-22 at 4 52 26 PM" src="https://github.com/user-attachments/assets/9863ae12-1f25-4bbd-997a-7ea0413d7f29" />
