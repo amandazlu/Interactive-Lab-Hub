@@ -56,18 +56,18 @@ with torch.no_grad():
     while True:
         # read frame
         ret, image = cap.read()
-        print('read')
+        # print('read')
         if not ret:
             raise RuntimeError("failed to read frame")
 
         # convert opencv output from BGR to RGB
         image = image[:, :, [2, 1, 0]]
-        print('image', image.shape)
+        # print('image', image.shape)
         permuted = image
 
         # preprocess
         input_tensor = preprocess(image)
-        print('preprocessing finished')
+        # print('preprocessing finished')
 
         # create a mini-batch as expected by the model
         # The model can handle multiple images simultaneously so we need to add an
