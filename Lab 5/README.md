@@ -1,7 +1,9 @@
 # Observant Systems
 
-**NAMES OF COLLABORATORS HERE**
+**COLLABORATORS:**
+[Shreya Kethi Reddy](https://github.com/littleredpolkadot/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Miriam Alex](https://github.com/miriam-alex/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Ying Yu Chen](https://github.com/chenyingyu-main/Interactive-Lab-Hub/blob/Fall2025/Lab%201/README.md)  
 
+Main Repository is Ying Yu Chen's ^
 
 For lab this week, we focus on creating interactive systems that can detect and respond to events or stimuli in the environment of the Pi, like the Boat Detector we mentioned in lecture. 
 Your **observant device** could, for example, count items, find objects, recognize an event or continuously monitor a room.
