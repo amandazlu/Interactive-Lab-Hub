@@ -1,7 +1,7 @@
 # Observant Systems
 
 **COLLABORATORS:**
-[Shreya Kethi Reddy](https://github.com/littleredpolkadot/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Miriam Alex](https://github.com/miriam-alex/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Ying Yu Chen](https://github.com/chenyingyu-main/Interactive-Lab-Hub/blob/Fall2025/Lab%201/README.md)  
+[Shreya Kethi Reddy](https://github.com/littleredpolkadot/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Miriam Alex](https://github.com/miriam-alex/Interactive-Lab-Hub/tree/Fall2025/Lab%205), [Ying Yu Chen](https://github.com/chenyingyu-main/Interactive-Lab-Hub/tree/Fall2025/Lab%205)  
 
 Main Repository is Ying Yu Chen's ^
 
