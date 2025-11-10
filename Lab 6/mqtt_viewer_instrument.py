@@ -10,6 +10,47 @@ from datetime import datetime
 from collections import deque
 import json
 
+
+import pygame
+import sys
+import os
+from time import sleep
+from functools import lru_cache
+
+# Initialize once when the module loads
+pygame.mixer.init()
+print("[OK] Audio system ready")
+
+CHANNELS = {
+    'pan': pygame.mixer.Channel(0),
+    'cutting_board': pygame.mixer.Channel(1),
+    'mixing_bowl': pygame.mixer.Channel(2)
+}
+
+# Global playback state
+playing_state = {
+    'pan': False,
+    'cutting_board': False,
+    'mixing_bowl': False
+}
+
+# Sound configuration: utensil -> (file_path, condition_function)
+SOUND_RULES = {
+    'pan': {
+        'file': 'sounds/pan_sizzle.mp3',
+        'should_play': lambda data: data.get('distance', 0) > 500
+    },
+    'cutting_board': {
+        'file': 'sounds/knife-stab-pull.mp3',
+        'should_play': lambda data: isinstance(data, (list, tuple)) and len(data) > 0 and data[0] == 1
+    },
+    'mixing_bowl': {
+        'file': 'sounds/whisking.mp3',
+        'should_play': lambda data: data.get('x', 0) > 600
+    }
+}
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mqtt-viewer-2025'
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
@@ -21,7 +62,7 @@ recent_messages = deque(maxlen=MAX_MESSAGES)
 # MQTT Configuration
 MQTT_BROKER = 'farlab.infosci.cornell.edu'
 MQTT_PORT = 1883
-MQTT_TOPIC = 'IDD/#'  # Subscribe to all IDD topics
+MQTT_TOPIC = 'IDD/kitchen-instrument'  # Subscribe to all IDD topics
 MQTT_USERNAME = 'idd'
 MQTT_PASSWORD = 'device@theFarm'
 
@@ -40,6 +81,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     """MQTT message received - broadcast to web clients"""
+    global playing_state
     try:
         # Try to parse as JSON, otherwise use as plain text
         try:
@@ -57,9 +99,33 @@ def on_message(client, userdata, msg):
             'payload': payload_str,
             'is_json': is_json
         }
+
+        # Play sounds based on utensil and data
+        utensil = payload.get('utensil', 'unknown') if is_json else 'unknown'
+        data = payload.get('data', {}) if is_json else {}
+
+        # Get rule for this utensil
+        rule = SOUND_RULES.get(utensil)
+        if not rule:
+            return
+
+        should_play = rule['should_play'](data)
+        sound_file = rule['file']
+
+        if should_play and not playing_state[utensil]:
+            # Start the sound
+            loop = utensil == 'pan'  # example: pan sizzle loops, others one-shot
+            play_sound(utensil, sound_file, loop=loop)
+            playing_state[utensil] = True
+
+        elif not should_play and playing_state[utensil]:
+            # Stop the sound if condition is no longer true
+            stop_sound(utensil)
+            playing_state[utensil] = False
+            
         # Add to recent messages
         recent_messages.append(message)
-        
+
         # Broadcast to all connected web clients
         socketio.emit('mqtt_message', message, namespace='/')
         
@@ -85,14 +151,52 @@ def start_mqtt_client():
         return True
         
     except Exception as e:
-        print(f'⚠️  MQTT client failed: {e}')
+        print(f'[ERR] MQTT client failed: {e}')
         return False
+    
+@lru_cache(maxsize=10)
+def load_sound(file_path):
+    """Cache loaded sound objects to avoid reloading."""
+    if not os.path.exists(file_path):
+        print(f"[ERROR] File not found: {file_path}")
+        return None
+    try:
+        return pygame.mixer.Sound(file_path)
+    except pygame.error as e:
+        print(f"[ERROR] Cannot load sound file: {e}")
+        return None
+
+def play_sound(utensil, file_path, loop=False):
+    """Play a sound for a specific utensil (overlapping allowed)."""
+    sound = load_sound(file_path)
+    if not sound:
+        return
+
+    channel = CHANNELS.get(utensil)
+    if channel:
+        # Loop indefinitely if needed (e.g., pan sizzle)
+        channel.play(sound, loops=-1 if loop else 0)
+        print(f"[PLAYING] {utensil}: {file_path}")
+    else:
+        print(f"[WARN] No channel for utensil '{utensil}'")
+
+def stop_sound(utensil):
+    """Stop sound for a specific utensil."""
+    channel = CHANNELS.get(utensil)
+    if channel:
+        channel.stop()
+        print(f"[STOPPED] {utensil}")
+
+def close_audio():
+    """Cleanly shut down the audio system."""
+    pygame.mixer.quit()
+    print("[CLOSED] Audio system shut down")
 
 
 @app.route('/')
 def index():
     """Main viewer page"""
-    return render_template('mqtt_viewer.html')
+    return render_template('kitchen.html')
 
 
 @socketio.on('connect')
