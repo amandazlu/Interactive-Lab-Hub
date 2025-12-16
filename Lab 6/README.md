@@ -1,8 +1,8 @@
 # Distributed Interaction
 
-**NAMES OF COLLABORATORS HERE**
+**COLLABORATORS:** [Shreya Kethi Reddy](https://github.com/littleredpolkadot/Interactive-Lab-Hub/tree/Fall2025/Lab%206), [Miriam Alex](https://github.com/miriam-alex/Interactive-Lab-Hub/tree/Fall2025/Lab%206), [Ying Yu Chen](https://github.com/chenyingyu-main/Interactive-Lab-Hub/tree/Fall2025/Lab%206)  
 
-For submission, replace this section with your documentation!
+Our main submission is located in Ying Yu Chen's Repo: [CLICK HERE](https://github.com/chenyingyu-main/Interactive-Lab-Hub/tree/Fall2025/Lab%206)
 
 ---
 
